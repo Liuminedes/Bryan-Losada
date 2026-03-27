@@ -887,13 +887,17 @@ function fp(n) {
   return "$" + n.toLocaleString("es-CO");
 }
 function fpShort(n) {
-  if (n >= 1000000) return "$" + (n / 1000000).toFixed(1).replace(".0","") + "M";
+  // Math.floor para nunca redondear hacia arriba ($59.9M no debe mostrar $60M)
+  if (n >= 1000000) {
+    var m = Math.floor(n / 100000) / 10; // trunca al decimal
+    return "$" + (m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)) + "M";
+  }
   return fp(n);
 }
 function getDisplayPrice(v) {
-  var isEV = v.tag === "Eléctrico";
-  if (isEV) return Math.min.apply(null, v.trims.map(function(t){ return t.precioPublico; }));
-  return Math.max.apply(null, v.trims.map(function(t){ return t.precioLista; }));
+  // Siempre el precio más bajo para atraer al cliente en la card
+  var allPrices = v.trims.map(function(t){ return t.precioLista; });
+  return Math.min.apply(null, allPrices);
 }
 
 // ─── THEME ────────────────────────────────────────
