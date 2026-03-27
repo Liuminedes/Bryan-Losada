@@ -985,11 +985,13 @@ function openVehicleModal(idx) {
       var bonoHtml = bono > 0
         ? '<span class="trim-bono">Bono ' + fp(bono) + '</span>' : "";
 
-      var featList = t.features && t.features.length
-        ? '<ul class="trim-features">' + t.features.map(function(f){
-            return '<li>' + f + '</li>';
-          }).join("") + '</ul>'
-        : "";
+      var featList = "";
+      if (t.features && t.features.length) {
+        var chips = t.features.map(function(f, fi) {
+          return '<li class="' + (fi===0?"chip-base":"") + '">' + f + '</li>';
+        }).join("");
+        featList = '<div class="trim-feat-title">Equipamiento incluido</div><ul class="trim-chips">' + chips + '</ul>';
+      }
 
       return (
         '<div class="trim-row" onclick="selectTrim(this,' + ti + ',\'' + v.name.replace(/'/g,"\\'") + '\',\'' + t.version.replace(/'/g,"\\'") + '\',' + t.year + ',' + p + ')" data-idx="' + ti + '">' +
